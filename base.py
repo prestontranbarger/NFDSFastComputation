@@ -19,6 +19,6 @@ def stringComplex(s):
 
 def totient(n):
     p = 1
-    for pe in f:
+    for pe in factor(n):
         p *= (pe[0] - 1) * (pe[0] ** (pe[1] - 1))
     return p

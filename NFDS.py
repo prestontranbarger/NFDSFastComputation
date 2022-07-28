@@ -1,21 +1,29 @@
 from precomputation import *
+from dirichletCharacters import *
+
+C = ComplexField()
 
 def sawtooth(x):
     #sawtooth function
     if x == floor(x):
         return 0
-    return x - floor(x) - 1 / 2
+    return C(x - floor(x) - 1 / 2, 0)
 
-def newFormDedekindSum(dChar1, dChar2, gamma):
+def newFormDedekindSum(dChar1, dChar2, gamma, verbose = False):
     #computes the new form dedekind sum of gamma given two primative characters with similar parity
     #this is in accordance with SVY's definition of a finite double sum formula
     sum = 0
     q1, q2 = modulus(dChar1), modulus(dChar2)
     a, c = gamma[0][0] if gamma[1][0] > 0 else -1 * gamma[0][0],\
            gamma[1][0] if gamma[1][0] > 0 else -1 * gamma[1][0]
-    for j in tqdm(range(c)):
-        for n in range(q1):
-            sum += dChar2(j).conjugate() * dChar1(n).conjugate() * (sawtooth(j / c) + 0 * I) * (sawtooth(n / q1 + a * j / c) + 0 * I)
+    if verbose:
+        for j in tqdm(range(c)):
+            for n in range(q1):
+                sum += dChar2(j).conjugate() * dChar1(n).conjugate() * sawtooth(j / c) * sawtooth(n / q1 + a * j / c)
+    else:
+        for j in range(c):
+            for n in range(q1):
+                sum += dChar2(j).conjugate() * dChar1(n).conjugate() * sawtooth(j / c) * sawtooth(n / q1 + a * j / c)
     return sum
 
 def newFormDedekindSumFast(dChar1, dChar2, gamma, chprPath):
