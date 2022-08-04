@@ -26,20 +26,21 @@ def newFormDedekindSum(dChar1, dChar2, gamma, verbose = False):
                 sum += dChar2(j).conjugate() * dChar1(n).conjugate() * sawtooth(j / c) * sawtooth(n / q1 + a * j / c)
     return sum
 
-def newFormDedekindSumFast(dChar1, dChar2, gamma, chprPath):
+def newFormDedekindSumFast(dChar1, dChar2, gamma, chpr):
     n = modulus(dChar1) * modulus(dChar2)
     repsDict, gRepsDict = cosetRepsSLTwoZOverGammaOneFast(n), cosetRepsGammaZeroOverGammaOneFast(n)
     g = gRepsDict[gamma[1][1] % n]
     m = gamma * g ** (-1)
-    precomputedDedekindSums = readAllChpr(chprPath)
-    rwt, sum = TSDecompToRewritingTape(TSDecomp(m)), precomputedDedekindSums[matrixString(g)]
+    if type(chpr) == str:
+        chpr = readAllChpr(chpr)
+    rwt, sum = TSDecompToRewritingTape(TSDecomp(m)), chpr[matrixString(g)]
     for i in tqdm(range(0, len(rwt), 2)):
         cosetRep1, cosetRep2, a = repsDict[(rwt[i][0][1][0] % n, rwt[i][0][1][1] % n)],\
                                   repsDict[(rwt[i + 1][0][1][0] % n, rwt[i + 1][0][1][1] % n)],\
                                   int(rwt[i][1][0][1])
         q, r = a // n, a % n
         cosetRep1n, cosetRep1r, cosetRep2t = cosetRep1 * T ** n, cosetRep1 * T ** r, cosetRep2 * rwt[i + 1][1]
-        sum += precomputedDedekindSums[matrixString(cosetRep1n * repsDict[(cosetRep1n[1][0] % n, cosetRep1n[1][1] % n)] ** (-1))] * q +\
-               precomputedDedekindSums[matrixString(cosetRep1r * repsDict[(cosetRep1r[1][0] % n, cosetRep1r[1][1] % n)] ** (-1))] +\
-               precomputedDedekindSums[matrixString(cosetRep2t * repsDict[(cosetRep2t[1][0] % n, cosetRep2t[1][1] % n)] ** (-1))]
+        sum += chpr[matrixString(cosetRep1n * repsDict[(cosetRep1n[1][0] % n, cosetRep1n[1][1] % n)] ** (-1))] * q +\
+               chpr[matrixString(cosetRep1r * repsDict[(cosetRep1r[1][0] % n, cosetRep1r[1][1] % n)] ** (-1))] +\
+               chpr[matrixString(cosetRep2t * repsDict[(cosetRep2t[1][0] % n, cosetRep2t[1][1] % n)] ** (-1))]
     return sum
