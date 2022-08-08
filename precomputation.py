@@ -2,11 +2,14 @@ from NFDS import *
 from dirichletCharacters import *
 from SLTwoZ import *
 
+import NFDS
+
 import os
 from os.path import isdir
 
 gensWritePath = "/precomputation"
 charWritePath = "/precomputation"
+reltWritePath = "/precomputation"
 
 def modPairs(N):
     pairs = []
@@ -48,6 +51,45 @@ def precomputeMatrices(n):
         f.close()
     return mtrxs
 
+def filterGammaOne(mtrxs, n):
+    outMtrxsIn, outMtrxsOut = [], []
+    for mtrx in mtrxs:
+        if inGammaOne(mtrx, n):
+            outMtrxsIn.append(mtrx)
+        else:
+            outMtrxsOut.append(mtrx)
+    return outMtrxsIn, outMtrxsOut
+
+def precomputeRelations(n):
+    subPath = os.getcwd() + gensWritePath + str("/relations/")
+    filePath = subPath + str(n) + ".relts"
+    if not isdir(subPath):
+        os.mkdir(subPath)
+    if os.path.exists(filePath):
+        f = open(filePath, "r")
+        rref = [[float(element) for element in line.split(",")[:-1]] for line in f.readlines()]
+        f.close()
+    else:
+        U, out = filterGammaOne(precomputeMatrices(n), n)
+        m = []
+        for URow in tqdm(U):
+            lC = NFDS.linearCombo(URow, U, n)
+            row = [lC[matrixString(UCol)] for UCol in U]
+            m.append(row)
+        sys = matrix(ZZ, m) - matrix.identity(len(m))
+        rrefSys = sys.rref()
+        lines = []
+        for row in rrefSys:
+            line = ""
+            for element in row:
+                line += str(float(element)) + ","
+            lines.append(line + "\n")
+        f = open(filePath, "w")
+        f.writelines(lines)
+        f.close
+        rref = [[float(element) for element in row] for row in rrefSys]
+    return rref
+
 def precomputeCharacterPairs(dChar1, dChar2):
     n = modulus(dChar1) * modulus(dChar2)
     subPath, filePath = createCharacterPairFile(dChar1, dChar2)
@@ -56,10 +98,39 @@ def precomputeCharacterPairs(dChar1, dChar2):
         f.writelines([matrixString(mtrx) + complexString(newFormDedekindSum(dChar1, dChar2, mtrx)) + "\n" for mtrx in tqdm(precomputeMatrices(n))])
         f.close()
 
+def precomputeCharacterPairsFast(dChar1, dChar2):
+    n = modulus(dChar1) * modulus(dChar2)
+    subPath, filePath = createCharacterPairFile(dChar1, dChar2)
+    if filePath != True:
+        mtrxsIn, mtrxsOut = filterGammaOne(precomputeMatrices(n), n)
+        relts = matrix(RR, precomputeRelations(n))
+        pivot = set(relts.pivots())
+        free = list(set([i for i in range(relts.nrows())]).difference(pivot))
+        pivotCols, pivotRows = list(pivot), list(set(relts.pivot_rows()))
+        pivotCols.sort()
+        pivotRows.sort()
+        lines, lookup = [], {}
+        for mtrx in tqdm(mtrxsOut):
+            lines.append(matrixString(mtrx) + complexString(newFormDedekindSum(dChar1, dChar2, mtrx)) + "\n")
+        for i in tqdm(free):
+            nfds = newFormDedekindSum(dChar1, dChar2, mtrxsIn[i])
+            lines.append(matrixString(mtrxsIn[i]) + complexString(nfds) + "\n")
+            lookup[i] = nfds
+        for i in range(len(pivotCols)):
+            pr, pc = pivotRows[i], pivotCols[i]
+            sum = 0
+            for j in free:
+                sum += -1 * relts[pr][j] * lookup[j]
+            lines.append(matrixString(mtrxsIn[pc]) + complexString(sum) + "\n")
+        f = open(filePath, "w")
+        f.writelines(lines)
+        f.close()
+
 def createCharacterPairFile(dChar1, dChar2):
     n = modulus(dChar1) * modulus(dChar2)
     str1, str2 = dCharString(dChar1), dCharString(dChar2)
-    subPath = os.getcwd() + gensWritePath + str("/characterPairs/")
+    subPath = os.getcwd() + gensWritePath + str("/characterPairs2/")
+    #TODO: CHANGE BACK FILE DIRECTORY
     if not isdir(subPath):
         os.mkdir(subPath)
     subPath += str1.split("c")[0] + "/"

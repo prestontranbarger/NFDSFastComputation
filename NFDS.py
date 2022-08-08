@@ -1,5 +1,6 @@
 from precomputation import *
 from dirichletCharacters import *
+from SLTwoZ import *
 
 C = ComplexField()
 
@@ -44,3 +45,26 @@ def newFormDedekindSumFast(dChar1, dChar2, gamma, chpr):
                chpr[matrixString(cosetRep1r * repsDict[(cosetRep1r[1][0] % n, cosetRep1r[1][1] % n)] ** (-1))] +\
                chpr[matrixString(cosetRep2t * repsDict[(cosetRep2t[1][0] % n, cosetRep2t[1][1] % n)] ** (-1))]
     return sum
+
+def linearCombo(gamma1, mtrxs, n):
+    repsDict = cosetRepsSLTwoZOverGammaOneFast(n)
+    if type(mtrxs) == str:
+        mtrxs = precomputeMatrices(mtrxs)
+    dictOut = {}
+    for mtrx in mtrxs:
+        if inGammaOne(mtrx, n):
+            dictOut[matrixString(mtrx)] = 0
+    rwt = TSDecompToRewritingTape(TSDecomp(gamma1))
+    for i in tqdm(range(0, len(rwt), 2)):
+        cosetRep1, cosetRep2, a = repsDict[(rwt[i][0][1][0] % n, rwt[i][0][1][1] % n)], \
+                                  repsDict[(rwt[i + 1][0][1][0] % n, rwt[i + 1][0][1][1] % n)], \
+                                  int(rwt[i][1][0][1])
+        q, r = a // n, a % n
+        cosetRep1n, cosetRep1r, cosetRep2t = cosetRep1 * T ** n, cosetRep1 * T ** r, cosetRep2 * rwt[i + 1][1]
+        string1n, string1r, string2t = matrixString(cosetRep1n * repsDict[(cosetRep1n[1][0] % n, cosetRep1n[1][1] % n)] ** (-1)),\
+                                       matrixString(cosetRep1r * repsDict[(cosetRep1r[1][0] % n, cosetRep1r[1][1] % n)] ** (-1)),\
+                                       matrixString(cosetRep2t * repsDict[(cosetRep2t[1][0] % n, cosetRep2t[1][1] % n)] ** (-1))
+        dictOut[string1n] += q
+        dictOut[string1r] += 1
+        dictOut[string2t] += 1
+    return dictOut

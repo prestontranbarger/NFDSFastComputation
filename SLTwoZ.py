@@ -6,6 +6,18 @@ T = matrix(ZZ, [[1, 1], [0, 1]])
 S.set_immutable()
 T.set_immutable()
 
+def inSLTwoZ(m):
+    #checks if m is in sl2z
+    return True if m.determinant() == 1 else False
+
+def inGammaZero(m, n):
+    #checks if m is in Gamma0(n)
+    return inSLTwoZ(m) and (m[1][0] % n == 0)
+
+def inGammaOne(m, n):
+    #checks if m is in Gamma1(n)
+    return inGammaZero(m, n) and (m[0][0] % n == 1) and (m[1][1] % n == 1)
+
 def TSDecomp(m):
     #returns the TS decomposition of a matrix
     TS = []
