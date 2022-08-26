@@ -7,4 +7,4 @@ for pair in modPairs(N):
             if isEven(dChar1) == isEven(dChar2):
                 if isPrimitive(dChar1) and isPrimitive(dChar2):
                     print(dChar1, r'&', dChar2)
-                    precomputeCharacterPairsFast(dChar1, dChar2)
+                    precomputeCharacterPairsFastLowMem(dChar1, dChar2)

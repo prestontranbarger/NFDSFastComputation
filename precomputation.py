@@ -62,6 +62,7 @@ def filterGammaOne(mtrxs, n):
 
 def precomputeRelations(n):
     subPath = os.getcwd() + gensWritePath + str("/relations/")
+    # TODO: CHANGE BACK FILE DIRECTORY
     filePath = subPath + str(n) + ".relts"
     if not isdir(subPath):
         os.mkdir(subPath)
@@ -90,6 +91,44 @@ def precomputeRelations(n):
         rref = [[float(element) for element in row] for row in rrefSys]
     return rref
 
+def precomputeRelationsLowMem(n):
+    subPath = os.getcwd() + gensWritePath + str("/relations/")
+    # TODO: CHANGE BACK FILE DIRECTORY
+    filePath = subPath + str(n) + "lm.relts"
+    if not isdir(subPath):
+        os.mkdir(subPath)
+    if os.path.exists(filePath):
+        f = open(filePath, "r")
+        lines = f.readlines()
+        f.close()
+        numPivots = int(lines[0])
+        pivots, free = [list(map(int, line[:-1].split(", "))) for line in lines[1:numPivots + 1]], list(map(int, lines[numPivots + 1].split(", ")))
+        relts = [list(map(float, line[:-2].split(",")))for line in lines[numPivots + 2:]]
+    else:
+        U, out = filterGammaOne(precomputeMatrices(n), n)
+        m = []
+        for URow in tqdm(U):
+            lC = NFDS.linearCombo(URow, U, n)
+            row = [lC[matrixString(UCol)] for UCol in U]
+            m.append(row)
+        sys = matrix(ZZ, m) - matrix.identity(len(m))
+        rrefSys = sys.rref()
+        pivots, free = pivotsCompSage(rrefSys)
+        lines = [str(len(pivots)) + "\n"] + [str(pivot)[1:-1] + "\n" for pivot in pivots] + [str(free)[1:-1] + "\n"]
+        relts = []
+        for row in rrefSys:
+            line = ""
+            reltsRow = []
+            for i in free:
+                line += str(float(row[i])) + ","
+                reltsRow.append(float(row[i]))
+            lines.append(line + "\n")
+            relts.append(reltsRow)
+        f = open(filePath, "w")
+        f.writelines(lines)
+        f.close
+    return pivots, free, relts
+
 def precomputeCharacterPairs(dChar1, dChar2):
     n = modulus(dChar1) * modulus(dChar2)
     subPath, filePath = createCharacterPairFile(dChar1, dChar2)
@@ -98,17 +137,39 @@ def precomputeCharacterPairs(dChar1, dChar2):
         f.writelines([matrixString(mtrx) + complexString(newFormDedekindSum(dChar1, dChar2, mtrx)) + "\n" for mtrx in tqdm(precomputeMatrices(n))])
         f.close()
 
+def pivotsComp(m):
+    rc, pivots, free = [0, 0], [], []
+    while rc[0] < len(m) and rc[1] < len(m[0]):
+        if m[rc[0]][rc[1]] == 0:
+            free.append(rc[1])
+            rc[1] += 1
+        else:
+            pivots.append([rc[0], rc[1]])
+            rc[0] += 1
+            rc[1] += 1
+    free.extend(range(rc[1], len(m[0])))
+    return pivots, free
+
+def pivotsCompSage(m):
+    rc, pivots, free = [0, 0], [], []
+    while rc[0] < m.nrows() and rc[1] < m.ncols():
+        if m[rc[0]][rc[1]] == 0:
+            free.append(rc[1])
+            rc[1] += 1
+        else:
+            pivots.append([rc[0], rc[1]])
+            rc[0] += 1
+            rc[1] += 1
+    free.extend(range(rc[1], m.ncols()))
+    return pivots, free
+
 def precomputeCharacterPairsFast(dChar1, dChar2):
     n = modulus(dChar1) * modulus(dChar2)
     subPath, filePath = createCharacterPairFile(dChar1, dChar2)
     if filePath != True:
         mtrxsIn, mtrxsOut = filterGammaOne(precomputeMatrices(n), n)
-        relts = matrix(RR, precomputeRelations(n))
-        pivot = set(relts.pivots())
-        free = list(set([i for i in range(relts.nrows())]).difference(pivot))
-        pivotCols, pivotRows = list(pivot), list(set(relts.pivot_rows()))
-        pivotCols.sort()
-        pivotRows.sort()
+        relts = precomputeRelations(n)
+        pivots, free = pivotsComp(relts)
         lines, lookup = [], {}
         for mtrx in tqdm(mtrxsOut):
             lines.append(matrixString(mtrx) + complexString(newFormDedekindSum(dChar1, dChar2, mtrx)) + "\n")
@@ -116,12 +177,33 @@ def precomputeCharacterPairsFast(dChar1, dChar2):
             nfds = newFormDedekindSum(dChar1, dChar2, mtrxsIn[i])
             lines.append(matrixString(mtrxsIn[i]) + complexString(nfds) + "\n")
             lookup[i] = nfds
-        for i in range(len(pivotCols)):
-            pr, pc = pivotRows[i], pivotCols[i]
+        for pivot in pivots:
             sum = 0
             for j in free:
-                sum += -1 * relts[pr][j] * lookup[j]
-            lines.append(matrixString(mtrxsIn[pc]) + complexString(sum) + "\n")
+                sum += -1 * relts[pivot[0]][j] * lookup[j]
+            lines.append(matrixString(mtrxsIn[pivot[1]]) + complexString(sum) + "\n")
+        f = open(filePath, "w")
+        f.writelines(lines)
+        f.close()
+
+def precomputeCharacterPairsFastLowMem(dChar1, dChar2):
+    n = modulus(dChar1) * modulus(dChar2)
+    subPath, filePath = createCharacterPairFile(dChar1, dChar2)
+    if filePath != True:
+        mtrxsIn, mtrxsOut = filterGammaOne(precomputeMatrices(n), n)
+        pivots, free, relts = precomputeRelationsLowMem(n)
+        lines, lookup = [], {}
+        for mtrx in tqdm(mtrxsOut):
+            lines.append(matrixString(mtrx) + complexString(newFormDedekindSum(dChar1, dChar2, mtrx)) + "\n")
+        for i in tqdm(free):
+            nfds = newFormDedekindSum(dChar1, dChar2, mtrxsIn[i])
+            lines.append(matrixString(mtrxsIn[i]) + complexString(nfds) + "\n")
+            lookup[i] = nfds
+        for pivot in pivots:
+            sum = 0
+            for i in range(len(free)):
+                sum += -1 * relts[pivot[0]][i] * lookup[free[i]]
+            lines.append(matrixString(mtrxsIn[pivot[1]]) + complexString(sum) + "\n")
         f = open(filePath, "w")
         f.writelines(lines)
         f.close()
@@ -129,7 +211,7 @@ def precomputeCharacterPairsFast(dChar1, dChar2):
 def createCharacterPairFile(dChar1, dChar2):
     n = modulus(dChar1) * modulus(dChar2)
     str1, str2 = dCharString(dChar1), dCharString(dChar2)
-    subPath = os.getcwd() + gensWritePath + str("/characterPairs2/")
+    subPath = os.getcwd() + gensWritePath + str("/characterPairsLM/")
     #TODO: CHANGE BACK FILE DIRECTORY
     if not isdir(subPath):
         os.mkdir(subPath)
