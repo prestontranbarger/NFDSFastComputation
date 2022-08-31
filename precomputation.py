@@ -245,7 +245,7 @@ def chprPathFinder(dChar1, dChar2):
     n = modulus(dChar1) * modulus(dChar2)
     str1, str2 = dCharString(dChar1), dCharString(dChar2)
     subPath = os.getcwd() + gensWritePath + \
-              str("/characterPairs/") + \
+              str("/characterPairsLM/") + \
               str1.split("c")[0] + "/" + \
               str1.split(";")[0].split("c")[1] + "/" + \
               str1.split(";")[1] + "/" + \
