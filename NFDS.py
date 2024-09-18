@@ -10,6 +10,13 @@ def sawtooth(x):
         return 0
     return C(x - floor(x) - 1 / 2, 0)
 
+def periodicBernoulli(weight, x):
+    sum = 0
+    for m in range(weight + 1):
+        for n in range(m + 1):
+            sum += (-1) ** n * binomial(m, n) * (frac(x) + n) ** weight / (m + 1)
+    return sum
+
 def newFormDedekindSum(dChar1, dChar2, gamma, verbose = False):
     #computes the new form dedekind sum of gamma given two primative characters with similar parity
     #this is in accordance with SVY's definition of a finite double sum formula
@@ -25,6 +32,19 @@ def newFormDedekindSum(dChar1, dChar2, gamma, verbose = False):
         for j in range(c):
             for n in range(q1):
                 sum += dChar2(j).conjugate() * dChar1(n).conjugate() * sawtooth(j / c) * sawtooth(n / q1 + a * j / c)
+    return sum
+
+def higherWeightDedekindSum(weight, dChar1, dChar2, mtrx):
+    a, c = mtrx[0][0], mtrx[1][0]
+    if c == 0:
+        return 0
+    elif c < 0:
+        a, c = -1 * a, -1 * c
+    q1 = modulus(dChar1)
+    sum = 0
+    for j in range(c + 1):
+        for n in range(q1 + 1):
+            sum += conjugate(dChar1(n)) * conjugate(dChar2(j)) * periodicBernoulli(1, j / c) * periodicBernoulli(weight - 1, a * j / c + n / q1)
     return sum
 
 def newFormDedekindSumFast(dChar1, dChar2, gamma, chpr):

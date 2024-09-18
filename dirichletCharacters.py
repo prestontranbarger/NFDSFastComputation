@@ -12,6 +12,12 @@ def isPrimitive(dChar):
 def isEven(dChar):
     return dChar.is_even()
 
+def isQuadratic(dChar):
+    for i in range(modulus(dChar)):
+        if dChar(i) not in ZZ:
+            return False
+    return True
+
 def dCharString(dChar):
     l = str(dChar).split()
     out = l[3] + "c" + l[6] + ";"
