@@ -115,7 +115,7 @@ It produces the output,
 ```
 
 Which tells us that
-```
+```math
 h_{\gamma,\chi_1,\chi_2,4}=-\dfrac{24}{5}\,x^2-\dfrac{96}{5}\,x-\dfrac{96}{5}\qquad\text{where}\qquad\gamma=\begin{pmatrix}
    51 & 104 \\ 25 & 51
 \end{pmatrix}.
