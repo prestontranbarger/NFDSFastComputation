@@ -76,6 +76,50 @@ Which tells us that our Dedekind sum equals the resulting complex number.
 - When handling the raw precomputation data for pairs of characters, it is best to use the ```characterPairsLM``` data as this is the most expansive data set in the repository.
 
 ## 3 - Higher Weight Generalized Dedekind Sums
-See the Tranbarger paper (at https://coming.soon) for relevant context.
 
-TO BE ADDED WITH ARXIV RELEASE
+See the Tranbarger paper (at https://arxiv.org/abs/2512.17139) for relevant context.
+
+This section will explain everything you need to know about how to compute the $h_{\gamma,\chi_1,\chi_2,k}$ functions detailed in the paper, in addition to how to graph the $\widehat{S}_{\chi_1,\chi_2,k}$ function to demonstrate quantum modularity.
+
+### 3.1 - Computing $h_{\gamma,\chi_1,\chi_2,k}$
+
+For fixed $k$ and primitive $\chi_1$ and $\chi_2$ with $\chi_1\chi_2(-1)=(-1)^k$ it is simple to compute $h_{\gamma,\chi_1,\chi_2,k}$ for $\gamma\in\Gamma_0(q_1q_2)$.
+
+1. After cloning this repository and creating a new python file within the folder be sure to go through all of the steps in the previous section to make sure your development enviroment is properly set up and that everything follows the expected behaviour.
+2. To compute $h_{\gamma,\chi_1,\chi_2,k}$ be sure to include ```from hFunctionInterpolation import *``` in the header of your python file where you would like to compute this function.
+3. Consult the example below.
+
+### 3.2 Example $h_{\gamma,\chi_1,\chi_2,k}$ Computation
+
+Given the unique pair of Dirichlet characters $\chi_1$ and $\chi_2$ with moduli $5$ and $5$ respectively such that $\chi_1(2)=\zeta_4^2$ and $\chi_2(2)=\zeta_4^2$ suppose we wish to compute
+```math
+h_{\gamma,\chi_1,\chi_2,4}\qquad\text{where}\qquad\gamma=\begin{pmatrix}
+   51 & 104 \\ 25 & 51
+\end{pmatrix}.
+```
+We can use the following code to accomplish this,
+```
+from hFunctionInterpolation import *
+gamma = matrix(ZZ, [[51, 104], [25, 51]])
+dChar1 = allDCharacters(5)[2]
+dChar2 = allDCharacters(5)[2]
+print(dCharString(dChar1), dCharString(dChar2))
+print(hFunctionInterpolate(gamma, dChar1, dChar2, 4))
+```
+
+It produces the output,
+```
+5c5;2-2 5c5;2-2
+100%|██████████| 3/3 [00:35<00:00, 11.70s/it]
+-24/5*x^2 - 96/5*x - 96/5
+```
+
+Which tells us that
+```
+h_{\gamma,\chi_1,\chi_2,4}=-\dfrac{24}{5}\,x^2-\dfrac{96}{5}\,x-\dfrac{96}{5}\qquad\text{where}\qquad\gamma=\begin{pmatrix}
+   51 & 104 \\ 25 & 51
+\end{pmatrix}.
+```
+
+### 3.2 - Graphing $\widehat{S}_{\chi_1,\chi_2,k}$
+
