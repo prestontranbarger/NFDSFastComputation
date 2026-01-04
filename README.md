@@ -121,5 +121,6 @@ h_{\gamma,\chi_1,\chi_2,4}=-\dfrac{24}{5}\,x^2-\dfrac{96}{5}\,x-\dfrac{96}{5}\qq
 \end{pmatrix}.
 ```
 
-### 3.2 - Graphing $\widehat{S}_{\chi_1,\chi_2,k}$
+### 3.3 - Graphing $\widehat{S}_{\chi_1,\chi_2,k}$
 
+To be added soon.
