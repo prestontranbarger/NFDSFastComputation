@@ -170,4 +170,4 @@ On the left are matrices in $\Gamma_1(q_1q_2)$ (which form a finite generating s
 
 ### 3.4 - Graphing $\widehat{S}_{\chi_1,\chi_2,k}$
 
-To be added soon.
+To generate a graph of $\widehat{S}_{\chi_1,\chi_2,k}$ as in Section 5.2 we first open the "hatSGraphing.py" file. On lines 12, 13, and 14 you can modify the parameters $k$, $\chi_1$, and $\chi_2$ respectively. When graphing make sure these choices of parameters return five "True" statements from the print line on line 15 of the code. To increase or decrease the sample of points $a/c$, you can respectively increase or decrease the value of $j$ on line 19; doing so will result in a commensurate increase or decrease in the time it takes for this program to generate a graph. To increase or decrease the y-axis cut-off, change the value of "maxHeight" on line 20.
