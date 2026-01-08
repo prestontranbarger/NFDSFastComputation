@@ -121,6 +121,53 @@ h_{\gamma,\chi_1,\chi_2,4}=-\dfrac{24}{5}\,x^2-\dfrac{96}{5}\,x-\dfrac{96}{5}\qq
 \end{pmatrix}.
 ```
 
-### 3.3 - Graphing $\widehat{S}_{\chi_1,\chi_2,k}$
+### 3.3 - Section 6.2, Precomputed $h_{\gamma,\chi_1,\chi_2,k}$ for the image $\widetilde{S}_{\chi_1,\chi_2,k}(\Gamma_1(q_1q_2))$
+
+Section 6.2 of this paper makes reference to precomputed $h_{\gamma,\chi_1,\chi_2,k}$ which are able to characterize the image $\widetilde{S}_{\chi_1,\chi_2,k}(\Gamma_1(q_1q_2))$ via Theorem 1.17 (for some pairs of characters and weights).
+
+These polynomials can be found in the "hFsOut" folder within the repository, and they are calculated for all quadratic primitive $\chi_1$ and $\chi_2$ with $\chi_1\chi_2(-1)=(-1)^k$. These triples are first indexed by $\chi_1$ and $\chi_2$ by subfolders of the form
+```(q_1q_2);(dCharString(dChar1);(dCharString(dChar2)```
+Then within these subfolders are further subfolders indexing the weight as follows
+```hF-k(weight),(dCharString(dChar1));(dCharString(dChar2))```
+
+Opening one of these files as an example, lets look at "hF-k4,7c7;3-3;3c3;2-1.txt":
+```1_1_0_1:0
+-20_1_-21_1:144/7*x^2 - 96/49*x
+43_-4_441_-41:9072*x^2 - 11808/7*x + 3840/49
+85_-9_189_-20:-27270/7*x^2 + 40596/49*x - 2160/49
+-146_17_-189_22:14352/7*x^2 - 23124/49*x + 1326/49
+22_-3_147_-20:2142*x^2 - 4104/7*x + 1962/49
+-146_23_-273_43:-68610/7*x^2 + 150876/49*x - 11856/49
+169_-30_231_-41:59340/7*x^2 - 147624/49*x + 13116/49
+-188_35_-231_43:14652/7*x^2 - 38184/49*x + 3552/49
+85_-16_441_-83:9828*x^2 - 25920/7*x + 17088/49
+-62_13_-105_22:-14502/7*x^2 + 42528/49*x - 4458/49
+-167_38_-189_43:22710/7*x^2 - 72600/49*x + 8286/49
+-209_49_-273_64:42354/7*x^2 - 139008/49*x + 16290/49
+106_-25_441_-104:17766*x^2 - 58680/7*x + 48450/49
+148_-39_315_-83:-78984/7*x^2 + 291324/49*x - 38382/49
+190_-51_231_-62:1464/7*x^2 - 5328/49*x + 684/49
+43_-12_147_-41:5292*x^2 - 20736/7*x + 20304/49
+22_-7_63_-20:-20166/7*x^2 + 87480/49*x - 13578/49
+-125_46_-231_85:-43602/7*x^2 + 224148/49*x - 41136/49
+169_-64_441_-167:-49770*x^2 + 263796/7*x - 349536/49
+64_-25_105_-41:-17190/7*x^2 + 93972/49*x - 18336/49
+-83_34_-105_43:6078/7*x^2 - 34836/49*x + 1020/7
+64_-27_147_-62:-3402*x^2 + 20088/7*x - 29646/49
+-146_67_-231_106:-130962/7*x^2 + 841800/49*x - 27606/7
+-230_107_-273_127:71670/7*x^2 - 466356/49*x + 108384/49
+-188_89_-357_169:-104040/7*x^2 + 689520/49*x - 163200/49
+211_-100_441_-209:-22680*x^2 + 150480/7*x - 249600/49
+232_-123_315_-167:90486/7*x^2 - 671568/49*x + 178014/49
+169_-93_189_-104:8640/7*x^2 - 66756/49*x + 18426/49
+85_-48_147_-83:-3402*x^2 + 26892/7*x - 53136/49
+43_-28_63_-41:18726/7*x^2 - 168468/49*x + 54156/49
+106_-75_147_-104:3780*x^2 - 37368/7*x + 92340/49
+127_-108_147_-125:1638*x^2 - 19476/7*x + 57888/49
+```
+
+On the left are matrices in $\Gamma_1(q_1q_2)$ (which form a finite generating set) written in the form a_b_c_d corresponding to the matrix $\begin{pmatrix}a & b \\ c & d\end{pmatrix}$. Then on the right, after the colon, is the corresponding $h_{\gamma,\chi_1,\chi_2,k}$ for each $\gamma$ in this finite generating set.
+
+### 3.4 - Graphing $\widehat{S}_{\chi_1,\chi_2,k}$
 
 To be added soon.
