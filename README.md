@@ -29,7 +29,7 @@
 11. Select ```OK``` to add the SageMath 9.1 interpreter; then select ```Create``` and ```Create from Existing Sources``` to open the project in the IDE.
 
 ## 2 - Fast Computation of Generalized Dedekind Sums
-See the Tranbarger, Wang paper (at https://www.worldscientific.com/doi/10.1142/S179304212450060X) for relevant context.
+See the Tranbarger, Wang paper (at [https://doi.org/10.1142/S179304212450060X]) for relevant context.
 
 This section will explain everything you need to know about how to leverage the algorithm detailed in the above paper to compute weight $2$ generalized Dedekind sums in an efficient manner. For the higher weight case, continue to the next section.
 
@@ -77,7 +77,7 @@ Which tells us that our Dedekind sum equals the resulting complex number.
 
 ## 3 - Higher Weight Generalized Dedekind Sums
 
-See the Tranbarger paper (at https://arxiv.org/abs/2512.17139) for relevant context.
+See the Tranbarger paper (at [https://doi.org/10.1016/j.jnt.2026.02.001]) for relevant context.
 
 This section will explain everything you need to know about how to compute the $h_{\gamma,\chi_1,\chi_2,k}$ functions detailed in the paper, in addition to how to graph the $\widehat{S}_{\chi_1,\chi_2,k}$ function to demonstrate quantum modularity.
 
